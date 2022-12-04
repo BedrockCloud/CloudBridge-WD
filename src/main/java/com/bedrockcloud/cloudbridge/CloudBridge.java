@@ -12,7 +12,7 @@ public class CloudBridge
     private static NetworkManager networkManager;
     private static PacketHandler packetHandler;
     private static int port;
-    private String serverName;
+    private final String serverName;
     
     public CloudBridge() {
         final Random r = new Random();
