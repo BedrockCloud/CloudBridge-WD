@@ -1,9 +1,8 @@
 package com.bedrockcloud;
 
 import com.bedrockcloud.commands.HubCommand;
-import com.bedrockcloud.player.CustomPlayer;
 import dev.waterdog.waterdogpe.ProxyServer;
-import dev.waterdog.waterdogpe.event.defaults.PlayerPreLoginEvent;
+import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import com.bedrockcloud.cloudbridge.network.packets.*;
@@ -34,7 +33,7 @@ public class BedrockCore extends Plugin
         this.cloudBridge = new CloudBridge();
         this.getProxy().getEventManager().subscribe(PreTransferEvent.class, this::listen);
         this.getProxy().getEventManager().subscribe(PlayerLoginEvent.class, this::onPlayerJoin);
-        this.getProxy().getEventManager().subscribe(PlayerPreLoginEvent.class, this::onPreLogin);
+        this.getProxy().getEventManager().subscribe(PlayerDisconnectEvent.class, this::onPlayerDisconnectListener);
         getInstance().getProxy().setJoinHandler((IJoinHandler)(this.joinHandler = new JoinHandler()));
         getInstance().getProxy().setReconnectHandler((IReconnectHandler)new ReconnectHandler(this.joinHandler));
         this.getProxy().getCommandMap().registerCommand(new HubCommand(this.joinHandler));
@@ -55,6 +54,17 @@ public class BedrockCore extends Plugin
         packet.addValue("serverName", this.cloudBridge.getServerName());
         packet.pushPacket();
     }
+
+    public void onPlayerDisconnectListener(PlayerDisconnectEvent event) {
+        final ProxyPlayerQuitPacket newpacket = new ProxyPlayerQuitPacket();
+        newpacket.playerName = event.getPlayer().getName();
+        try {
+            newpacket.leftServer = event.getPlayer().getServerInfo().getServerName();
+        } catch (NullPointerException e) {
+            newpacket.leftServer = "NOT FOUND";
+        }
+        newpacket.pushPacket();
+    }
     
     private void listen(final PreTransferEvent event) {
         final ServerInfo server = event.getTargetServer();
@@ -69,10 +79,6 @@ public class BedrockCore extends Plugin
             packet.server = server.getServerName();
             packet.pushPacket();
         }
-    }
-
-    public void onPreLogin(final PlayerPreLoginEvent event) {
-        event.setBaseClass(CustomPlayer.class);
     }
     
     public void onPlayerJoin(final PlayerLoginEvent event) {
