@@ -3,33 +3,32 @@ package com.bedrockcloud.cloudbridge.network.client;
 import com.bedrockcloud.cloudbridge.CloudBridge;
 import dev.waterdog.waterdogpe.ProxyServer;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
+import org.json.simple.JSONObject;
 
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientRequest extends Thread
 {
+    private static final int BUFFER_SIZE = 1024;
     private final Socket socket;
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
-    
+
     public ClientRequest(final Socket socket) {
         this.socket = socket;
         try {
-            this.dataInputStream = new DataInputStream(socket.getInputStream());
-            this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            this.dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream(), BUFFER_SIZE));
+            this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream(), BUFFER_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.start();
     }
-    
+
     public Socket getSocket() {
         return this.socket;
     }
-    
+
     @Override
     public void run() {
         while (!this.socket.isClosed()) {
@@ -37,15 +36,25 @@ public class ClientRequest extends Thread
             try {
                 line = this.dataInputStream.readLine();
                 if (line == null) {
+                    close();
                     return;
                 }
-                CloudBridge.getPacketHandler().handleCloudPacket(CloudBridge.getPacketHandler().handleJsonObject(CloudBridge.getPacketHandler().getPacketNameByRequest(line), line), this);
-            } catch (IOException e) {
-                for (ProxiedPlayer p : ProxyServer.getInstance().getPlayers().values()){
-                    p.disconnect("§cProxy Restart");
+                JSONObject packet = CloudBridge.getPacketHandler().handleJsonObject(CloudBridge.getPacketHandler().getPacketNameByRequest(line), line);
+                if (packet != null) {
+                    CloudBridge.getPacketHandler().handleCloudPacket(packet, this);
                 }
+            } catch (IOException e) {
+                close();
+            }
+        }
+    }
+
+    private void close() {
+        if (this.socket != null) {
+            try {
+                this.socket.close();
                 ProxyServer.getInstance().shutdown();
-                System.exit(0);
+            } catch (IOException e) {
             }
         }
     }
