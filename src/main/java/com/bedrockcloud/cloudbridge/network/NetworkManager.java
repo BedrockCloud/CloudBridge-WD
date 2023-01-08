@@ -68,6 +68,6 @@ public class NetworkManager implements Runnable {
     }
 
     public boolean isLocalHost(){
-        return this.datagramSocket.getInetAddress().isLoopbackAddress();
+        return this.datagramSocket.getLocalAddress().isAnyLocalAddress();
     }
 }

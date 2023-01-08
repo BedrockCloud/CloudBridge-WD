@@ -3,7 +3,6 @@ com\bedrockcloud\cloudbridge\network\packets\ProxyServerConnectPacket.class
 com\bedrockcloud\handler\ReconnectHandler.class
 com\bedrockcloud\manager\ServerManager.class
 com\bedrockcloud\cloudbridge\network\packets\SendToHubPacket.class
-com\bedrockcloud\cloudbridge\network\client\ClientRequest.class
 com\bedrockcloud\cloudbridge\CloudBridge.class
 com\bedrockcloud\cloudbridge\network\DataPacket.class
 com\bedrockcloud\cloudbridge\network\packets\PlayerKickPacket.class
