@@ -67,6 +67,10 @@ public class NetworkManager implements Runnable {
         }
     }
 
+    /**
+     *
+     * This is needed to check if is the address an local address.
+     */
     public boolean isLocalHost(){
         return this.datagramSocket.getLocalAddress().isAnyLocalAddress();
     }
