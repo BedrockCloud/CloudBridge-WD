@@ -16,7 +16,6 @@ com\bedrockcloud\commands\HubCommand.class
 com\bedrockcloud\cloudbridge\network\packets\PlayerMovePacket.class
 com\bedrockcloud\cloudbridge\network\packets\CloudPlayerChangeServerPacket.class
 com\bedrockcloud\cloudbridge\network\packets\ProxyPlayerQuitPacket.class
-com\bedrockcloud\api\WaterdogAPI.class
 com\bedrockcloud\cloudbridge\network\packets\ProxyPlayerJoinPacket.class
 com\bedrockcloud\cloudbridge\network\packets\PlayerTextPacket.class
 com\bedrockcloud\cloudbridge\network\packets\CloudNotifyMessagePacket.class

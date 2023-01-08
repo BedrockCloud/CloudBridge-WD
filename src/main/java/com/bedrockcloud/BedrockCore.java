@@ -18,12 +18,15 @@ import dev.waterdog.waterdogpe.plugin.Plugin;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BedrockCore extends Plugin
 {
     private static BedrockCore instance;
     private CloudBridge cloudBridge;
     public JoinHandler joinHandler;
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
     
     public void onStartup() {
         BedrockCore.instance = this;
@@ -52,7 +55,7 @@ public class BedrockCore extends Plugin
     public void onDisable() {
         final ProxyServerDisconnectPacket packet = new ProxyServerDisconnectPacket();
         packet.addValue("serverName", this.cloudBridge.getServerName());
-        packet.pushPacket();
+        packet.pushPacket(packet);
     }
 
     public void onPlayerDisconnectListener(PlayerDisconnectEvent event) {
@@ -63,7 +66,7 @@ public class BedrockCore extends Plugin
         } catch (NullPointerException e) {
             newpacket.leftServer = "NOT FOUND";
         }
-        newpacket.pushPacket();
+        newpacket.pushPacket(newpacket);
     }
     
     private void listen(final PreTransferEvent event) {
@@ -77,7 +80,7 @@ public class BedrockCore extends Plugin
             final CloudPlayerChangeServerPacket packet = new CloudPlayerChangeServerPacket();
             packet.playerName = event.getPlayer().getName().toLowerCase(Locale.ROOT).replace(" ", "_");
             packet.server = server.getServerName();
-            packet.pushPacket();
+            packet.pushPacket(packet);
         }
     }
     
@@ -89,7 +92,7 @@ public class BedrockCore extends Plugin
         packet.address = String.valueOf(player.getAddress());
         packet.xuid = player.getXuid();
         packet.uuid = String.valueOf(player.getUniqueId());
-        packet.pushPacket();
+        packet.pushPacket(packet);
     }
     
     public static BedrockCore getInstance() {
@@ -107,5 +110,9 @@ public class BedrockCore extends Plugin
     public YamlConfig getProxyConfig() {
         File configFile = new File(getProxy().getDataPath().toString() + "/config.yml");
         return new YamlConfig(configFile);
+    }
+
+    public ExecutorService getThreadPool() {
+        return threadPool;
     }
 }

@@ -2,7 +2,6 @@ package com.bedrockcloud.cloudbridge.network.packets;
 
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.ProxyServer;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -19,7 +18,7 @@ public class PlayerTextPacket extends DataPacket {
     }
 
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String playerName = jsonObject.get("playerName").toString();
         final String typeS = jsonObject.get("type").toString();
         final int type = Integer.parseInt(typeS);

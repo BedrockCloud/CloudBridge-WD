@@ -1,7 +1,6 @@
 package com.bedrockcloud.cloudbridge.network.handler;
 
 import com.bedrockcloud.cloudbridge.network.DataPacket;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import dev.waterdog.waterdogpe.ProxyServer;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -16,8 +15,6 @@ public class PacketHandler
 
     private static final String PACKET_NAME_KEY = "packetName";
     private Map<String, Class<? extends DataPacket>> registeredPackets;
-
-
 
     public PacketHandler() {
         this.registeredPackets = new HashMap<>();
@@ -44,9 +41,12 @@ public class PacketHandler
     }
 
     public String getPacketNameByRequest(final String request) {
-        final JSONObject jsonObject = (JSONObject) JSONValue.parse(request);
-        if (jsonObject != null && jsonObject.containsKey(PACKET_NAME_KEY)) {
-            return jsonObject.get(PACKET_NAME_KEY).toString();
+        final Object obj = JSONValue.parse(request);
+        if (obj != null) {
+            final JSONObject jsonObject = (JSONObject)obj;
+            if (jsonObject.get("packetName") != null) {
+                return jsonObject.get("packetName").toString();
+            }
         }
         ProxyServer.getInstance().getLogger().warning("Handling of packet cancelled because the packet is unknown!");
         return "Unknown Packet";
@@ -54,30 +54,28 @@ public class PacketHandler
 
     public JSONObject handleJsonObject(final String packetName, final String input) {
         if (this.isPacketRegistered(packetName)) {
-            final JSONObject jsonObject = (JSONObject) JSONValue.parse(input);
-            if (jsonObject != null) {
-                return jsonObject;
-            }
+            final Object obj = JSONValue.parse(input);
+            final JSONObject jsonObject = (JSONObject)obj;
+            return jsonObject;
         }
-        ProxyServer.getInstance().getLogger().warning("Denied unknown packet.");
+
+        ProxyServer.getInstance().getLogger().warning("§eFailed to handle packet: " + packetName);
         return new JSONObject();
     }
 
-    public void handleCloudPacket(final JSONObject jsonObject, final ClientRequest clientRequest) {
-        if (clientRequest.getSocket().getInetAddress().toString().equals("/127.0.0.1")) {
-            if (jsonObject.containsKey(PACKET_NAME_KEY)) {
-                final String packetName = jsonObject.get(PACKET_NAME_KEY).toString();
-                final Class<? extends DataPacket> packetClass = this.getPacketByName(packetName);
-                if (packetClass != null) {
-                    try {
-                        final DataPacket packet = packetClass.newInstance();
-                        packet.handle(jsonObject, clientRequest);
-                    } catch (InstantiationException | IllegalAccessException ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
-                    ProxyServer.getInstance().getLogger().warning("Denied unauthorized server.");
+    public void handleCloudPacket(final JSONObject jsonObject) {
+        if (jsonObject.containsKey(PACKET_NAME_KEY)) {
+            final String packetName = jsonObject.get(PACKET_NAME_KEY).toString();
+            final Class<? extends DataPacket> packetClass = this.getPacketByName(packetName);
+            if (packetClass != null) {
+                try {
+                    final DataPacket packet = packetClass.newInstance();
+                    packet.handle(jsonObject);
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    ex.printStackTrace();
                 }
+            } else {
+                ProxyServer.getInstance().getLogger().warning("Denied unauthorized server.");
             }
         }
     }

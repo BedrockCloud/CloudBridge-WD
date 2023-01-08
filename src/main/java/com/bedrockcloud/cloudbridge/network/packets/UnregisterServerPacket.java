@@ -6,7 +6,6 @@ import dev.waterdog.waterdogpe.event.defaults.InitialServerDeterminationEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.ProxyServer;
 import com.bedrockcloud.BedrockCore;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -18,7 +17,7 @@ public class UnregisterServerPacket extends DataPacket
     }
     
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String serverName = jsonObject.get("serverName").toString();
         final ServerInfo server = ProxyServer.getInstance().getServerInfo(serverName);
 

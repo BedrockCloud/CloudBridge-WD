@@ -3,9 +3,12 @@ package com.bedrockcloud.cloudbridge;
 import com.bedrockcloud.cloudbridge.network.packets.*;
 import com.bedrockcloud.cloudbridge.config.Config;
 
+import java.net.SocketException;
 import java.util.Random;
 import com.bedrockcloud.cloudbridge.network.handler.PacketHandler;
 import com.bedrockcloud.cloudbridge.network.NetworkManager;
+import dev.waterdog.waterdogpe.ProxyServer;
+import dev.waterdog.waterdogpe.WaterdogPE;
 
 public class CloudBridge
 {
@@ -21,9 +24,9 @@ public class CloudBridge
         CloudBridge.port = r.nextInt(high - low) + low;
         CloudBridge.packetHandler = new PacketHandler();
         registerPacket();
-        CloudBridge.networkManager = new NetworkManager(CloudBridge.port);
+        CloudBridge.networkManager = new NetworkManager(Integer.parseInt(ProxyServer.getInstance().getConfiguration().getBindAddress().toString().split(":")[1])+1);
         final ProxyServerConnectPacket packet = new ProxyServerConnectPacket();
-        packet.pushPacket();
+        packet.pushPacket(packet);
         final Config config = new Config("./cloud.yml", 2);
         this.serverName = (String)config.get("name");
     }

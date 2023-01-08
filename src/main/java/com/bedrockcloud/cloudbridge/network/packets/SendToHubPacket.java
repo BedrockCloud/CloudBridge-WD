@@ -3,7 +3,6 @@ package com.bedrockcloud.cloudbridge.network.packets;
 import com.bedrockcloud.BedrockCore;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.ProxyServer;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -15,7 +14,7 @@ public class SendToHubPacket extends DataPacket
     }
 
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String playerName = jsonObject.get("playerName").toString();
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
         if (player != null){

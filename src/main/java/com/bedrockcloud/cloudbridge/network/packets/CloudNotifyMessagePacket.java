@@ -4,7 +4,6 @@ import com.bedrockcloud.BedrockCore;
 import com.bedrockcloud.cloudbridge.config.Config;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.ProxyServer;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -18,7 +17,7 @@ public class CloudNotifyMessagePacket extends DataPacket
     }
     
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String message = jsonObject.get("message").toString();
         final String msg = message.replace("&", "§");
         final String fixuni = msg.replace("\u00c2", "");

@@ -3,7 +3,6 @@ package com.bedrockcloud.cloudbridge.network.packets;
 import dev.waterdog.waterdogpe.ProxyServer;
 import com.bedrockcloud.BedrockCore;
 import com.bedrockcloud.manager.ServerManager;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -15,7 +14,7 @@ public class RegisterServerPacket extends DataPacket
     }
     
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String serverName = jsonObject.get("serverName").toString();
         final String port = jsonObject.get("serverPort").toString();
         ServerManager.unregisterServer(serverName);

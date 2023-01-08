@@ -1,7 +1,6 @@
 package com.bedrockcloud.cloudbridge.network.packets;
 
 import dev.waterdog.waterdogpe.ProxyServer;
-import com.bedrockcloud.cloudbridge.network.client.ClientRequest;
 import org.json.simple.JSONObject;
 import com.bedrockcloud.cloudbridge.network.DataPacket;
 
@@ -13,7 +12,7 @@ public class PlayerKickPacket extends DataPacket
     }
     
     @Override
-    public void handle(final JSONObject jsonObject, final ClientRequest clientRequest) {
+    public void handle(final JSONObject jsonObject) {
         final String reason = jsonObject.get("reason").toString();
         final String playerName = jsonObject.get("playerName").toString();
         if (ProxyServer.getInstance().getPlayer(playerName) != null) {

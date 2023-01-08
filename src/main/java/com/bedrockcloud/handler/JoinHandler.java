@@ -75,7 +75,7 @@ public class JoinHandler implements IJoinHandler
             final CloudPlayerChangeServerPacket packet = new CloudPlayerChangeServerPacket();
             packet.playerName = player.getName();
             packet.server = String.valueOf(smallest.getServerName());
-            packet.pushPacket();
+            packet.pushPacket(packet);
         }
     }
     
